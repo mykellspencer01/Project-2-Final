@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from GameApp.views import home_view, home_detail_view, login_view, registration_view
+from GameApp.views import home_view, home_detail_view, login_view, registration_view, lobby_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,5 @@ urlpatterns = [
     path('home/<int:user_id>', home_detail_view),
     path('login/', login_view),
     path('registration/', registration_view),
+    path('lobby/', lobby_view)
 ]
