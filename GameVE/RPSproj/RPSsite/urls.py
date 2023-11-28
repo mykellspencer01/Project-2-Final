@@ -23,6 +23,7 @@ urlpatterns = [
     path('', home_view),
     path('home/<int:user_id>', home_detail_view),
     path('login/', login_view),
-    path('registration/', registration_view),
+    path('registration/', registration_view, name = "register"),
+    #path("register", ),
     path('lobby/', lobby_view)
 ]
