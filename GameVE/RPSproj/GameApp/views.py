@@ -1,54 +1,27 @@
 from django.shortcuts import render, redirect
-from django.shortcuts import HttpResponse
-from django.contrib.auth import get_user_model, login
-from .models import Stuffs
-from .forms import userRegistrationForm
-from django.contrib.auth.forms import AuthenticationForm
+from .forms import UserRegistrationForm
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
  
-def home_view(request, *args, **kwargs):
-    return HttpResponse('<h1>Hello World</h1>')
+def home(request):
+    return render(request, 'html/home.html')
 
-def home_detail_view(request, user_id, *args, **kwargs):
-    obj = Stuffs.objects.get(id = user_id)
-    return HttpResponse(f'<h1>Hello {user_id} </h1>')
-
-def login_view(request):
+def register(request):
     if request.method == "POST":
-        log_form = AuthenticationForm(data = request.POST)
-        if log_form.is_valid():
-            return redirect('/')
-    else:
-        log_form = AuthenticationForm()
-    
-    return render(
-        request,
-        template_name = 'login.html',
-        context = {"form": log_form}
-    )
-
-
-def registration_view(request):
-    if request.user.is_authenticated:
-        return redirect('/')
-    
-    if request.method == "POST":
-        form = userRegistrationForm(request.POST)
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('/')
-        else:
-            for error in list(form.errors.values()):
-                print(request, error)
-    
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Hello {username}, your account was created successfully!')
+            return redirect('home')
     else:
-        form = userRegistrationForm()
+        form = UserRegistrationForm()
+    return render(request, 'html/registration.html', {'form': form})
+    
+@login_required
+def profile(request):
+    return render(request, 'html/profile.html')
 
-    return render(
-        request = request,
-        template_name = "registration.html",
-        context = {"form": form}
-    )
-
-def lobby_view(request, *args, **kwargs):
-    return HttpResponse('<h1>Lobby Page</h1>')
+@login_required
+def lobby(request):
+    return render(request, 'html/lobby.html')
